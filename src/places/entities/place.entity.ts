@@ -10,7 +10,7 @@ export class Place {
   address: string;
   services: string[];
   status: PlaceStatusEnum;
-  averageRating: number;
+  averageRating: number | null;
   reviewCount: number;
   createdAt: Date;
   updatedAt: Date;
