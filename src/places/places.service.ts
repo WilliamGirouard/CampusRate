@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PlaceRepository } from './repository/places.repository.js';
 import { Place } from './entities/place.entity.js';
 import { CreatePlaceDto } from './dto/create-places.dto.js';
@@ -54,6 +54,17 @@ export class PlacesService {
             throw new NotFoundException(`Couldn't find place with id ${id}`);
         }
         return updatedPlace;
+    }
+    async deleteOnePlace(id : string) : Promise<void> {
+        await this.findOnePlaceById(id);
+
+        const reviews = await this.reviewRepository.findAllReviews();
+        const hasReviews = reviews.some((review) => review.placeId === id);
+
+        if (hasReviews) {
+            throw new ConflictException(`Can't delete place with ${id} because of existing reviews`);
+        }
+        await this.placeRepository.deleteOnePlace(id);
     }
 
 }
