@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
     export class ProblemDetailsDto {
-        
-      @ApiProperty({ example: 'about:blank' })
+
+      @ApiProperty({ example: 'https://campus-rate.example/problems/validation-error' })
       type!: string;
 
       @ApiProperty({ example: 'Bad Request' })
