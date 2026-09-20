@@ -1,0 +1,974 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1": {
+      "get": {
+        "operationId": "AppController_getHello_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/api/v1/places": {
+      "get": {
+        "description": "Return the collection of places filtered and paginated",
+        "operationId": "PlacesController_findAllPlaces_v1",
+        "parameters": [
+          {
+            "name": "category",
+            "required": true,
+            "in": "query",
+            "description": "Place Category filter",
+            "schema": {
+              "example": "STUDY_SPACE",
+              "type": "string",
+              "enum": [
+                "STUDY_SPACE",
+                "LIBRARY",
+                "FOOD_SERVICE",
+                "SPORTS",
+                "STUDENT_SERVICE",
+                "COMPUTER_LAB"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Place pagination number (Current page number)",
+            "schema": {
+              "default": 1,
+              "example": 3,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "The limit of places per pages (how many places per page)",
+            "schema": {
+              "minimum": 1,
+              "maximum": 25,
+              "default": 10,
+              "example": 5,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of places",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueriedPlacesResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid category, page or limit",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "List places",
+        "tags": [
+          "Places"
+        ]
+      },
+      "post": {
+        "description": "Create a new place and add it to the list of places",
+        "operationId": "PlacesController_createOnePlace_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePlaceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Place has been created",
+            "headers": {
+              "Location": {
+                "description": "URI of the created Place",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaceResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create a place",
+        "tags": [
+          "Places"
+        ]
+      }
+    },
+    "/api/v1/places/{id}": {
+      "get": {
+        "description": "Returns one place by given id",
+        "operationId": "PlacesController_findOnePlaceById_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The place's ID",
+            "schema": {
+              "example": "plc_01JABC123",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Place found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaceResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Place not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get info on one place",
+        "tags": [
+          "Places"
+        ]
+      },
+      "patch": {
+        "description": "Partially update an existing place",
+        "operationId": "PlacesController_updateOnePlace_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The place's ID",
+            "schema": {
+              "example": "plc_01JABC123",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePlaceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Place modified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaceResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Place not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update a place",
+        "tags": [
+          "Places"
+        ]
+      },
+      "delete": {
+        "description": "Delete an existing place that has no reviews",
+        "operationId": "PlacesController_deleteOnePlaceById_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The place's ID",
+            "schema": {
+              "example": "plc_01JABC123",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Place deleted"
+          },
+          "404": {
+            "description": "Place not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The place you want to delete has reviews, thus it cannot be deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete a place",
+        "tags": [
+          "Places"
+        ]
+      }
+    },
+    "/api/v1/reviews/{id}": {
+      "get": {
+        "description": "Returns one review by given id",
+        "operationId": "ReviewsController_findOneReviewById_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The review's ID",
+            "schema": {
+              "example": "rvw_01JABC123",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Review found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Review not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get info on one review",
+        "tags": [
+          "Reviews"
+        ]
+      },
+      "patch": {
+        "description": "Partially update an existing review and recalculate the statistics",
+        "operationId": "ReviewsController_updateOneReview_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The reviews's ID",
+            "schema": {
+              "example": "rvw_01JABC123",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Review modified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Review not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update a review",
+        "tags": [
+          "Reviews"
+        ]
+      },
+      "delete": {
+        "description": "Delete an existing review and recalculate the statistics",
+        "operationId": "ReviewsController_deleteOneReviewById_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The review's ID",
+            "schema": {
+              "example": "rvw_01JABC123",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Review deleted"
+          },
+          "404": {
+            "description": "Review not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete a review",
+        "tags": [
+          "Reviews"
+        ]
+      }
+    },
+    "/api/v1/places/{placeId}/reviews": {
+      "get": {
+        "description": "Returns all reviews linked to given place",
+        "operationId": "ReviewsController_findAllReviewsByPlaceId_v1",
+        "parameters": [
+          {
+            "name": "placeId",
+            "required": true,
+            "in": "path",
+            "description": "The place's ID",
+            "schema": {
+              "example": "plc_01JABC123",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of reviews",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReviewResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "List reviews for a place",
+        "tags": [
+          "Reviews"
+        ]
+      },
+      "post": {
+        "description": "Create a review for an existing place and recalculate the statistics",
+        "operationId": "ReviewsController_createOneReview_v1",
+        "parameters": [
+          {
+            "name": "placeId",
+            "required": true,
+            "in": "path",
+            "description": "The place's ID",
+            "schema": {
+              "example": "plc_01JABC123",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Review has been created",
+            "headers": {
+              "Location": {
+                "description": "URI of the created review",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Place not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetailsDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create a review for one place",
+        "tags": [
+          "Reviews"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "CampusRate API",
+    "description": "REST API that let you review places on a Campus and browse them",
+    "version": "1.0.0",
+    "contact": {
+
+    }
+  },
+  "tags": [
+    {
+      "name": "Places",
+      "description": "Places management"
+    },
+    {
+      "name": "Reviews",
+      "description": "Reviews management"
+    }
+  ],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "PlaceResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "plc_01JABC123"
+          },
+          "name": {
+            "type": "string",
+            "example": "Main Library"
+          },
+          "description": {
+            "type": "string",
+            "example": "Huge library with many books."
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "STUDY_SPACE",
+              "LIBRARY",
+              "FOOD_SERVICE",
+              "SPORTS",
+              "STUDENT_SERVICE",
+              "COMPUTER_LAB"
+            ],
+            "example": "LIBRARY"
+          },
+          "address": {
+            "type": "string",
+            "example": "Building L, Local-L505"
+          },
+          "services": {
+            "example": [
+              "WIFI",
+              "POWER_OUTLETS",
+              "COMPUTERS"
+            ],
+            "type": "array",
+            "items": {
+              "type": "array"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "TEMPORARILY_CLOSED",
+              "INACTIVE"
+            ],
+            "example": "ACTIVE"
+          },
+          "averageRating": {
+            "type": "object",
+            "example": 4.75,
+            "nullable": true,
+            "description": "If no review, then null, if review, then average rating"
+          },
+          "reviewCount": {
+            "type": "number",
+            "example": 1,
+            "description": "There is 1 review, 0 if no review"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "category",
+          "address",
+          "services",
+          "status",
+          "averageRating",
+          "reviewCount",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "PaginationDto": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "number",
+            "example": 1,
+            "description": "The current page number"
+          },
+          "limit": {
+            "type": "number",
+            "example": 25,
+            "description": "The limit of items per pages"
+          },
+          "totalItems": {
+            "type": "number",
+            "example": 0,
+            "description": "Total count of items filtered"
+          },
+          "totalPages": {
+            "type": "number",
+            "example": 0,
+            "description": "Total amount of pages of items filtered"
+          }
+        },
+        "required": [
+          "page",
+          "limit",
+          "totalItems",
+          "totalPages"
+        ]
+      },
+      "QueriedPlacesResponseDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "The filtered places's data",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlaceResponseDto"
+            }
+          },
+          "pagination": {
+            "description": "The queried information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "data",
+          "pagination"
+        ]
+      },
+      "ProblemDetailsDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "https://campus-rate.example/problems/validation-error"
+          },
+          "title": {
+            "type": "string",
+            "example": "Bad Request"
+          },
+          "status": {
+            "type": "number",
+            "example": 400
+          },
+          "detail": {
+            "type": "string",
+            "example": "The request has invalid data."
+          },
+          "instance": {
+            "type": "string",
+            "example": "/api/v1/places"
+          },
+          "errors": {
+            "example": [
+              "The name is required."
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "title",
+          "status",
+          "detail",
+          "instance"
+        ]
+      },
+      "CreatePlaceDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Significative name of the place",
+            "example": "Main Library",
+            "maxLength": 50
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of the place",
+            "example": "Huge library with many books.",
+            "maxLength": 100
+          },
+          "category": {
+            "type": "string",
+            "description": "The place's category : enumerated values",
+            "enum": [
+              "STUDY_SPACE",
+              "LIBRARY",
+              "FOOD_SERVICE",
+              "SPORTS",
+              "STUDENT_SERVICE",
+              "COMPUTER_LAB"
+            ],
+            "example": "LIBRARY"
+          },
+          "address": {
+            "type": "string",
+            "description": "The address of the place",
+            "example": "Building L, Local L-505",
+            "maxLength": 100
+          },
+          "services": {
+            "description": "The place's services, without duplicates",
+            "example": [
+              "WIFI",
+              "POWER_OUTLETS",
+              "COMPUTERS"
+            ],
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "array"
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "The place's status : enumerated values",
+            "enum": [
+              "ACTIVE",
+              "TEMPORARILY_CLOSED",
+              "INACTIVE"
+            ],
+            "example": "ACTIVE",
+            "default": "ACTIVE"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "category",
+          "address"
+        ]
+      },
+      "UpdatePlaceDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Significative name of the place",
+            "example": "Main Library",
+            "maxLength": 50
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of the place",
+            "example": "Huge library with many books.",
+            "maxLength": 100
+          },
+          "category": {
+            "type": "string",
+            "description": "The place's category : enumerated values",
+            "enum": [
+              "STUDY_SPACE",
+              "LIBRARY",
+              "FOOD_SERVICE",
+              "SPORTS",
+              "STUDENT_SERVICE",
+              "COMPUTER_LAB"
+            ],
+            "example": "LIBRARY"
+          },
+          "address": {
+            "type": "string",
+            "description": "The address of the place",
+            "example": "Building L, Local L-505",
+            "maxLength": 100
+          },
+          "services": {
+            "description": "The place's services, without duplicates",
+            "example": [
+              "WIFI",
+              "POWER_OUTLETS",
+              "COMPUTERS"
+            ],
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "array"
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "The place's status : enumerated values",
+            "enum": [
+              "ACTIVE",
+              "TEMPORARILY_CLOSED",
+              "INACTIVE"
+            ],
+            "example": "ACTIVE",
+            "default": "ACTIVE"
+          }
+        }
+      },
+      "ReviewResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "rev_01JXYZ789",
+            "description": "Review ID"
+          },
+          "placeId": {
+            "type": "string",
+            "example": "plc_01JABC123",
+            "description": "Place ID"
+          },
+          "authorName": {
+            "type": "string",
+            "example": "William"
+          },
+          "rating": {
+            "type": "number",
+            "example": 4,
+            "minimum": 1,
+            "maximum": 5
+          },
+          "comment": {
+            "type": "string",
+            "example": "Great Wi-fi, nice environnment"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "placeId",
+          "authorName",
+          "rating",
+          "comment",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UpdateReviewDto": {
+        "type": "object",
+        "properties": {
+          "authorName": {
+            "type": "string",
+            "description": "The reviewer's name",
+            "example": "William",
+            "maxLength": 50
+          },
+          "rating": {
+            "type": "number",
+            "description": "The given rating of the place by the reviewer",
+            "example": 4,
+            "minimum": 1,
+            "maximum": 5
+          },
+          "comment": {
+            "type": "string",
+            "description": "Comment on the place",
+            "example": "Great Wi-fi, nice environnment",
+            "maxLength": 100,
+            "minLength": 25
+          }
+        }
+      },
+      "CreateReviewDto": {
+        "type": "object",
+        "properties": {
+          "authorName": {
+            "type": "string",
+            "description": "The reviewer's name",
+            "example": "William",
+            "maxLength": 50
+          },
+          "rating": {
+            "type": "number",
+            "description": "The given rating of the place by the reviewer",
+            "example": 4,
+            "minimum": 1,
+            "maximum": 5
+          },
+          "comment": {
+            "type": "string",
+            "description": "Comment on the place",
+            "example": "Great Wi-fi, nice environnment",
+            "maxLength": 100,
+            "minLength": 25
+          }
+        },
+        "required": [
+          "authorName",
+          "rating",
+          "comment"
+        ]
+      }
+    }
+  }
+}
