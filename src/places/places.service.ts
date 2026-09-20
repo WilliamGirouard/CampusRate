@@ -55,7 +55,7 @@ export class PlacesService {
         }
         return updatedPlace;
     }
-    async deleteOnePlace(id : string) : Promise<void> {
+    async deleteOnePlaceById(id : string) : Promise<void> {
         await this.findOnePlaceById(id);
 
         const reviews = await this.reviewRepository.findAllReviews();
@@ -64,7 +64,7 @@ export class PlacesService {
         if (hasReviews) {
             throw new ConflictException(`Can't delete place with ${id} because of existing reviews`);
         }
-        await this.placeRepository.deleteOnePlace(id);
+        await this.placeRepository.deleteOnePlaceById(id);
     }
 
 }

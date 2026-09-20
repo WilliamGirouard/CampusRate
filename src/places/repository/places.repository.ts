@@ -34,7 +34,7 @@ export class PlaceRepository {
         return places[index];
     }
 
-    async deleteOnePlace(id: string): Promise<boolean> {
+    async deleteOnePlaceById(id: string): Promise<boolean> {
         const storedData = await this.storageService.readJSONFile();
         const places = storedData.places as Place[];
         const index = places.findIndex((place) => place.id === id);
