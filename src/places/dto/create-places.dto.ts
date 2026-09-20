@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
 import {
   ArrayUnique,
   IsArray,
@@ -18,7 +17,6 @@ export class CreatePlaceDto {
     example: 'Main Library',
     maxLength: 50,
   })
-  @Expose()
   @IsString()
   @IsNotEmpty()
   @MaxLength(50)
@@ -29,7 +27,6 @@ export class CreatePlaceDto {
     example: 'Huge library with many books.',
     maxLength: 100,
   })
-  @Expose()
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
@@ -40,7 +37,6 @@ export class CreatePlaceDto {
     enum: PlaceCategoryEnum,
     example: PlaceCategoryEnum.LIBRARY,
   })
-  @Expose()
   @IsEnum(PlaceCategoryEnum)
   @IsNotEmpty()
   category!: PlaceCategoryEnum;
@@ -50,7 +46,6 @@ export class CreatePlaceDto {
     example: 'Building L, Local L-505',
     maxLength: 100,
   })
-  @Expose()
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
@@ -64,7 +59,6 @@ export class CreatePlaceDto {
     default: [],
   })
   @IsOptional()
-  @Expose()
   @IsArray()
   @ArrayUnique()
   @IsString({ each: true })
@@ -78,7 +72,6 @@ export class CreatePlaceDto {
     default: PlaceStatusEnum.ACTIVE,
   })
   @IsOptional()
-  @Expose()
   @IsEnum(PlaceStatusEnum)
-  status?: PlaceStatusEnum = PlaceStatusEnum.ACTIVE;
+  status?: PlaceStatusEnum;
 }

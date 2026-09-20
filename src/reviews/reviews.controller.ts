@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Res } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ReviewsService } from './reviews.service.js';
-import { ReviewResponseDto } from './dto/ReviewResponseDto.js';
+import { ReviewResponseDto } from './dto/review-response.dto.js';
 import { ProblemDetailsDto } from '../common/dtos/problem-details.dto.js';
 import { UpdateReviewDto } from './dto/update-reviews.dto.js';
 import { CreateReviewDto } from './dto/create-reviews.dto.js';

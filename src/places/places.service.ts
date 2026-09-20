@@ -5,6 +5,8 @@ import { CreatePlaceDto } from './dto/create-places.dto.js';
 import { PlaceStatusEnum } from './enum/place.status.enum.js';
 import { UpdatePlaceDto } from './dto/update-places.dto.js';
 import { ReviewRepository } from '../reviews/repository/reviews.repository.js';
+import { PaginationFilteringQueryDto } from './dto/pagination-filtering-query.dto.js';
+import { QueriedPlacesResponseDto } from './dto/queried-places-response.dto.js';
 
 @Injectable()
 export class PlacesService {
@@ -13,8 +15,21 @@ export class PlacesService {
         private readonly reviewRepository : ReviewRepository,
     ) { }
 
-    async findAllPlace(): Promise<Place[]> {
-        return await this.placeRepository.findAllPlaces();
+    async findAllPlace(dto : PaginationFilteringQueryDto): Promise<QueriedPlacesResponseDto> {
+        const places = await this.placeRepository.findAllPlaces();
+        const filteredPlacesByCategory = dto.category ? places.filter((place) => place.category === dto.category) : places;
+        const start = (dto.page - 1) * dto.limit;
+        const correctPagePlaces = filteredPlacesByCategory.slice(start, start + dto.limit);
+        const totalItems = filteredPlacesByCategory.length;
+        const totalPages = Math.ceil(totalItems / dto.limit);
+        const queries = {
+            page: dto.page,
+            limit: dto.limit,
+            totalItems: totalItems,
+            totalPages: totalPages
+        }
+
+        return {data: correctPagePlaces, pagination: queries};
     }
     async findOnePlaceById(id : string): Promise<Place> {
         const place = await this.placeRepository.findOnePlaceById(id);

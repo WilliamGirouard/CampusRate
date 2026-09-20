@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
 import {
     IsInt,
   IsNotEmpty,
@@ -17,7 +16,6 @@ export class CreateReviewDto {
     example: 'William',
     maxLength: 50,
   })
-  @Expose()
   @IsString()
   @IsNotEmpty()
   @MaxLength(50)
@@ -29,7 +27,6 @@ export class CreateReviewDto {
     minimum: 1,
     maximum: 5
   })
-  @Expose()
   @IsInt()
   @Min(1)
   @Max(5)
@@ -42,7 +39,6 @@ export class CreateReviewDto {
     maxLength: 100,
     minLength: 25,
   })
-  @Expose()
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)

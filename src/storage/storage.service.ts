@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException, OnModuleInit } from '@nestjs/
 import { ConfigService } from '@nestjs/config';
 import { readFile, writeFile, mkdir, access } from 'node:fs/promises';
 import { dirname } from 'node:path';
-import { StorageContract } from './interface/storageContract.js';
+import { StorageContract } from './interface/storage-contract.js';
 
 
 
