@@ -29,7 +29,7 @@ export class PlacesController {
         description : "Returns one place by given id"
     })
     @ApiParam({name: "id", description: "The place's ID", example: "plc_01JABC123"})
-    @ApiOkResponse({description : "Place found", type: [PlaceResponseDto] })
+    @ApiOkResponse({description : "Place found", type: PlaceResponseDto })
     @ApiNotFoundResponse({description: "Place not found", type: ProblemDetailsDto })
     async findOnePlaceById(@Param("id") id : string) {
         return this.placesService.findOnePlaceById(id);
@@ -55,7 +55,8 @@ export class PlacesController {
     @ApiBody({type : CreatePlaceDto})
     async createOnePlace(@Body() dto : CreatePlaceDto, @Res({ passthrough : true }) response : Response) {
         const createdPlace = await this.placesService.createOnePlace(dto);
-        response.setHeader("Location", `/api/v1/places/${createdPlace.id}`)
+        response.setHeader("Location", `/api/v1/places/${createdPlace.id}`);
+        return createdPlace;
     }
 
     @Patch(":id")
@@ -74,11 +75,11 @@ export class PlacesController {
         type: ProblemDetailsDto
     })
     @ApiBody({type: UpdatePlaceDto})
-    async update(@Param("id") id : string, @Body() dto: UpdatePlaceDto) {
+    async updateOnePlace(@Param("id") id : string, @Body() dto: UpdatePlaceDto) {
         return this.placesService.updateOnePlace(id, dto);
     }
 
-    @Delete("id")
+    @Delete(":id")
     @HttpCode(204)
     @ApiOperation({
         summary: "Delete a place",

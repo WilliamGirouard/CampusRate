@@ -38,7 +38,7 @@ export class ReviewRepository {
         return reviews[index];
     }
 
-    async deleteOneReview(id: string): Promise<boolean> {
+    async deleteOneReviewById(id: string): Promise<boolean> {
         const storedData = await this.storageService.readJSONFile();
         const reviews = storedData.reviews as Review[];
         const index = reviews.findIndex((review) => review.id === id);

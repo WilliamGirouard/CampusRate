@@ -51,9 +51,9 @@ export class ReviewsService {
         await this.recalculatePlaceStatistics(review.placeId)
         return updatedReview;
     }
-    async deleteOneReview(id: string): Promise<void> {
+    async deleteOneReviewById(id: string): Promise<void> {
         const review = await this.findOneReviewById(id);
-        const deletedReview = await this.reviewRepository.deleteOneReview(id);
+        const deletedReview = await this.reviewRepository.deleteOneReviewById(id);
         if (!deletedReview) {
             throw new NotFoundException(`Couldn't find review with id ${id}`);
         }
