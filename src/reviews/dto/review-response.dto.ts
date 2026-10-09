@@ -2,9 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class ReviewResponseDto {
 
-    @ApiProperty({ example: 'rev_01JXYZ789', description: "Review ID"})
+    @ApiProperty({ example: '6ac9454abb6cc8366ddd350c', description: "Review ID"})
     id!: string;
-    @ApiProperty({ example: 'plc_01JABC123', description: "Place ID" })
+    @ApiProperty({ example: '6ac9454abb6cc8366ddd450c', description: "Place ID" })
     placeId!: string;
 
     @ApiProperty({ example: 'William' })

@@ -3,7 +3,6 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { PlacesModule } from './places/places.module.js';
 import { ReviewsModule } from './reviews/reviews.module.js';
-import { StorageModule } from './storage/storage.module.js';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import Joi from 'joi';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -26,7 +25,6 @@ import { MongooseModule } from '@nestjs/mongoose';
     }),
     PlacesModule,
     ReviewsModule,
-    StorageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

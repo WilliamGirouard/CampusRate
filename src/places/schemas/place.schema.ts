@@ -23,7 +23,7 @@ export class Place extends Document {
     @Prop({required: true, enum: PlaceStatusEnum, type:String, default: PlaceStatusEnum.ACTIVE})
     status: PlaceStatusEnum;
 
-    @Prop({default: null})
+    @Prop({type: Number, default: null})
     averageRating: number | null;
 
     @Prop({default: 0})

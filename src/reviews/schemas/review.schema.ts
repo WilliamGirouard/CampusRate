@@ -9,7 +9,7 @@ export class Review extends Document {
     placeId: string
     @Prop({ required: true, trim: true, maxLength: 50 })
     authorName: string
-    @Prop({ trequired: true, min: 1, max: 5, type: Number })
+    @Prop({ required: true, min: 1, max: 5, type: Number })
     rating: number
     @Prop({ required: true, minLength: 25, maxLength: 100 })
     comment: string
