@@ -31,7 +31,7 @@ export class PlacesController {
         summary: "Get info on one place",
         description: "Returns one place by given id"
     })
-    @ApiParam({ name: "id", description: "The place's ID", example: "plc_01JABC123" })
+    @ApiParam({ name: "id", description: "The place's ID", example: "67069b2f1c9d2e0012ab34cd" })
     @ApiOkResponse({ description: "Place found", type: PlaceResponseDto })
     @ApiNotFoundResponse({ description: "Place not found", type: ProblemDetailsDto })
     async findOnePlaceById(@Param("id") id: string) {
@@ -67,7 +67,7 @@ export class PlacesController {
         summary: "Update a place",
         description: "Partially update an existing place"
     })
-    @ApiParam({ name: "id", description: "The place's ID", example: "plc_01JABC123" })
+    @ApiParam({ name: "id", description: "The place's ID", example: "67069b2f1c9d2e0012ab34cd" })
     @ApiOkResponse({ description: "Place modified", type: PlaceResponseDto })
     @ApiBadRequestResponse({
         description: "Invalid data",
@@ -88,7 +88,7 @@ export class PlacesController {
         summary: "Delete a place",
         description: "Delete an existing place that has no reviews"
     })
-    @ApiParam({ name: "id", description: "The place's ID", example: "plc_01JABC123" })
+    @ApiParam({ name: "id", description: "The place's ID", example: "67069b2f1c9d2e0012ab34cd" })
     @ApiNoContentResponse({ description: "Place deleted" })
     @ApiConflictResponse({
         description: "The place you want to delete has reviews, thus it cannot be deleted",

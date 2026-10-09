@@ -1,52 +1,32 @@
 import { Injectable } from "@nestjs/common";
-import { StorageService } from "../../storage/storage.service.js";
-import { Review } from "../entities/review.entity.js";
+import { InjectModel } from "@nestjs/mongoose";
+import { Review } from "../schemas/review.schema.js";
+import { Model, Types } from "mongoose";
 
 @Injectable()
 export class ReviewRepository {
 
-    constructor(private readonly storageService: StorageService) { }
+    constructor(@InjectModel(Review.name) private readonly reviewModel : Model<Review>) { }
 
     async findAllReviews(): Promise<Review[]> {
-        const storedData = await this.storageService.readJSONFile();
-        return storedData.reviews as Review[];
+        return this.reviewModel.find().exec();
     }
     async findOneReviewById(id: string): Promise<Review | null> {
-        const reviews = await this.findAllReviews();
-        return reviews.find((review) => review.id === id) ?? null;
+        return this.reviewModel.findById(id).exec();
     }
     async findReviewsByPlaceId(placeId : string) : Promise<Review[]> {
-        const reviews = await this.findAllReviews();
-        return reviews.filter((review) => review.placeId === placeId);
+        return this.reviewModel.find({placeId}).exec();
     }
-    async createOneReview(review: Review): Promise<Review> {
-        const storedData = await this.storageService.readJSONFile();
-        const reviews = storedData.reviews as Review[];
-        reviews.push(review);
-        await this.storageService.writeJSONFile(storedData);
-        return review;
+    async createOneReview(review: Partial<Review>): Promise<Review> {
+        const newReview = new this.reviewModel(review);
+        return newReview.save();
     }
     async updateOneReview(id: string, attr: Partial<Review>): Promise<Review | null> {
-        const storedData = await this.storageService.readJSONFile();
-        const reviews = storedData.reviews as Review[];
-        const index = reviews.findIndex((review) => review.id === id);
-        if (index === -1) {
-            return null;
-        }
-        reviews[index] = { ...reviews[index], ...attr, updatedAt: new Date() };
-        await this.storageService.writeJSONFile(storedData);
-        return reviews[index];
+        return this.reviewModel.findByIdAndUpdate(id, attr, {new : true}).exec();
     }
 
     async deleteOneReviewById(id: string): Promise<boolean> {
-        const storedData = await this.storageService.readJSONFile();
-        const reviews = storedData.reviews as Review[];
-        const index = reviews.findIndex((review) => review.id === id);
-        if (index === -1) {
-            return false;
-        }
-        reviews.splice(index, 1);
-        await this.storageService.writeJSONFile(storedData);
-        return true;
+        const result = await this.reviewModel.findByIdAndDelete(id).exec();
+        return result !== null;
     }
 }

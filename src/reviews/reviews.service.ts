@@ -4,6 +4,8 @@ import { Review } from './entities/review.entity.js';
 import { CreateReviewDto } from './dto/create-reviews.dto.js';
 import { UpdateReviewDto } from './dto/update-reviews.dto.js';
 import { PlacesService } from '../places/places.service.js';
+import { ReviewResponseDto } from './dto/review-response.dto.js';
+import { ReviewMapper } from './mappers/review.mapper.js';
 
 @Injectable()
 export class ReviewsService {
@@ -12,47 +14,48 @@ export class ReviewsService {
         private readonly placeService : PlacesService
     ) { }
 
-    async findAllReview(): Promise<Review[]> {
-        return await this.reviewRepository.findAllReviews();
+    async findAllReview(): Promise<ReviewResponseDto[]> {
+        const reviews = await this.reviewRepository.findAllReviews();
+        return ReviewMapper.toResponseDtoArray(reviews);
     }
-    async findOneReviewById(id: string): Promise<Review> {
+
+    async findOneReviewById(id: string): Promise<ReviewResponseDto> {
         const review = await this.reviewRepository.findOneReviewById(id);
         if (!review) {
             throw new NotFoundException(`Couldn't find review with id ${id}`);
         }
-        return review;
+        return ReviewMapper.toResponseDto(review);
     }
-    async findAllReviewsByPlaceId(placeId: string) : Promise<Review[]> {
-        return await this.reviewRepository.findReviewsByPlaceId(placeId);
-    }
-    async createOneReview(placeId: string, dto: CreateReviewDto): Promise<Review> {
+    async findAllReviewsByPlaceId(placeId: string) : Promise<ReviewResponseDto[]> {
         await this.placeService.findOnePlaceById(placeId);
-
-        const currentDate = new Date();
-        const newReview: Review = {
-            id: "rvw_" + Math.random().toString(36).slice(2, 11).toUpperCase().padEnd(9, "0"),
+        const reviews = await this.reviewRepository.findReviewsByPlaceId(placeId);
+        return ReviewMapper.toResponseDtoArray(reviews);
+    }
+    async createOneReview(placeId: string, dto: CreateReviewDto): Promise<ReviewResponseDto> {
+        await this.placeService.findOnePlaceById(placeId);
+        const newReview = {
             placeId,
             authorName: dto.authorName,
             rating: dto.rating,
             comment: dto.comment,
-            createdAt: currentDate,
-            updatedAt: currentDate,
         };
         const created = await this.reviewRepository.createOneReview(newReview);
         await this.recalculatePlaceStatistics(placeId)
-        return created;
+        return ReviewMapper.toResponseDto(created);
     }
-    async updateOneReview(id: string, dto: UpdateReviewDto): Promise<Review> {
+    async updateOneReview(id: string, dto: UpdateReviewDto): Promise<ReviewResponseDto> {
         const review = await this.findOneReviewById(id);
+
         const updatedReview = await this.reviewRepository.updateOneReview(id, dto);
         if (!updatedReview) {
             throw new NotFoundException(`Couldn't find review with id ${id}`);
         }
         await this.recalculatePlaceStatistics(review.placeId)
-        return updatedReview;
+        return ReviewMapper.toResponseDto(updatedReview);
     }
     async deleteOneReviewById(id: string): Promise<void> {
         const review = await this.findOneReviewById(id);
+
         const deletedReview = await this.reviewRepository.deleteOneReviewById(id);
         if (!deletedReview) {
             throw new NotFoundException(`Couldn't find review with id ${id}`);
@@ -61,10 +64,17 @@ export class ReviewsService {
     }
 
     private async recalculatePlaceStatistics(placeId: string) : Promise<void> {
-        const reviews = await this.findAllReviewsByPlaceId(placeId);
+        const reviews = await this.reviewRepository.findReviewsByPlaceId(placeId);
         const reviewCount = reviews.length;
-        const averageRating = reviewCount === 0 ? null : reviews.reduce((sum, review) => sum + review.rating, 0) / reviewCount;
-
+        if (reviewCount === 0) {
+            await this.placeService.updatePlaceStatistics(placeId, {
+                averageRating: null,
+                reviewCount: 0,
+            });
+            return;
+        }
+        const totalRating = reviews.reduce((sum, review) => sum + Number(review.rating), 0);
+        const averageRating = Number((totalRating / reviewCount).toFixed(2));
         await this.placeService.updatePlaceStatistics(placeId, {averageRating, reviewCount});
     }
 

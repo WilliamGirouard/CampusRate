@@ -4,8 +4,9 @@ import { AppService } from './app.service.js';
 import { PlacesModule } from './places/places.module.js';
 import { ReviewsModule } from './reviews/reviews.module.js';
 import { StorageModule } from './storage/storage.module.js';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import Joi from 'joi';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
@@ -13,8 +14,15 @@ import Joi from 'joi';
       isGlobal: true,
       validationSchema : Joi.object({
         PORT: Joi.number().default(3000),
-        DATA_FILE_PATH: Joi.string().required()
+        MONGO_URI: Joi.string().required()
       })
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService : ConfigService) => ({
+        uri: configService.get<string>("MONGO_URI"),
+      }),
+      inject: [ConfigService]
     }),
     PlacesModule,
     ReviewsModule,
