@@ -1,6 +1,5 @@
 import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ReviewRepository } from './repository/reviews.repository.js';
-import { Review } from './entities/review.entity.js';
 import { CreateReviewDto } from './dto/create-reviews.dto.js';
 import { UpdateReviewDto } from './dto/update-reviews.dto.js';
 import { PlacesService } from '../places/places.service.js';

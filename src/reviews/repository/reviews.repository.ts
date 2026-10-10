@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Review } from "../schemas/review.schema.js";
-import { Model, Types } from "mongoose";
+import { Model } from "mongoose";
 
 @Injectable()
 export class ReviewRepository {

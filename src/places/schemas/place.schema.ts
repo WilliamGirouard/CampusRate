@@ -5,7 +5,7 @@ import { Document } from "mongoose";
 
 @Schema({timestamps: true})
 export class Place extends Document {
-    @Prop({required: true, trim: true, maxLength: 50})
+    @Prop({required: true, unique: true, trim: true, maxLength: 50})
     name : string;
 
     @Prop({required: true, maxLength: 100})
@@ -20,7 +20,7 @@ export class Place extends Document {
     @Prop({type: [String], default: []})
     services: string[];
 
-    @Prop({required: true, enum: PlaceStatusEnum, type:String, default: PlaceStatusEnum.ACTIVE})
+    @Prop({required: true, enum: PlaceStatusEnum, type:String, default: PlaceStatusEnum.ACTIVE, index:true})
     status: PlaceStatusEnum;
 
     @Prop({type: Number, default: null})
@@ -35,4 +35,4 @@ export class Place extends Document {
     @Prop({default: null})
     updatedAt?: Date;
 }
-export const PlaceShema = SchemaFactory.createForClass(Place);
+export const PlaceSchema = SchemaFactory.createForClass(Place);
