@@ -19,7 +19,7 @@ export class PlaceRepository {
         return newPlace.save();
     }
     async updateOnePlace(id: string, attr: Partial<Place>): Promise<Place | null> {
-        return this.placeModel.findByIdAndUpdate(id, attr, {new: true}).exec();
+        return this.placeModel.findByIdAndUpdate(id, attr, {returnDocument : "after"}).exec();
     }
 
     async deleteOnePlaceById(id: string): Promise<boolean> {

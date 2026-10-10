@@ -22,7 +22,7 @@ export class ReviewRepository {
         return newReview.save();
     }
     async updateOneReview(id: string, attr: Partial<Review>): Promise<Review | null> {
-        return this.reviewModel.findByIdAndUpdate(id, attr, {new : true}).exec();
+        return this.reviewModel.findByIdAndUpdate(id, attr, {returnDocument : "after"}).exec();
     }
 
     async deleteOneReviewById(id: string): Promise<boolean> {
