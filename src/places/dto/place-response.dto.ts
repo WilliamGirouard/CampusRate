@@ -3,7 +3,7 @@ import { PlaceCategoryEnum } from '../enum/place.category.enum.js';
 import { PlaceStatusEnum } from '../enum/place.status.enum.js';
 
 export class PlaceResponseDto {
-  @ApiProperty({ example: 'plc_01JABC123' })
+  @ApiProperty({ example: '6ac9454abb6cc8366ddd350c' })
   id!: string;
 
   @ApiProperty({ example: 'Main Library' })

@@ -1,0 +1,189 @@
+{
+  "info": {
+    "name": "CampusRate - TP2 TESTS",
+    "description": "Manual test scenarios for the CampusRate API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://localhost:3000/api/v1",
+      "type": "string"
+    },
+    { "key": "placeId", "value": "", "type": "string" },
+    { "key": "reviewId", "value": "", "type": "string" },
+    { "key": "persistenceTestPlaceId", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "1. Create a Place",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 201', function () { pm.response.to.have.status(201); });",
+              "pm.test('Location header is present', function () { pm.response.to.have.header('Location'); });",
+              "const body = pm.response.json();",
+              "pm.test('averageRating is null and reviewCount is 0', function () {",
+              "    pm.expect(body.averageRating).to.equal(null);",
+              "    pm.expect(body.reviewCount).to.equal(0);",
+              "});",
+              "pm.collectionVariables.set('placeId', body.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Main Library\",\n  \"description\": \"Huge library with many books.\",\n  \"category\": \"STUDY_SPACE\",\n  \"address\": \"Building L, Local L-505\",\n  \"services\": [\"WIFI\", \"POWER_OUTLETS\"]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/places",
+          "host": ["{{baseUrl}}"],
+          "path": ["places"]
+        }
+      }
+    },
+    {
+      "name": "2. Get the Created Place",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Returned place matches created id', function () {",
+              "    pm.expect(pm.response.json().id).to.equal(pm.collectionVariables.get('placeId'));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/places/{{placeId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["places", "{{placeId}}"]
+        }
+      }
+    },
+    {
+      "name": "3. Create a Review for the Place",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 201', function () { pm.response.to.have.status(201); });",
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('reviewId', body.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"authorName\": \"Samira\",\n  \"rating\": 4,\n  \"comment\": \"Calme et Wi-Fi stable ! Vraiment top en tout cas !.\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/places/{{placeId}}/reviews",
+          "host": ["{{baseUrl}}"],
+          "path": ["places", "{{placeId}}", "reviews"]
+        }
+      }
+    },
+    {
+      "name": "4. [H2] Payload Too Large Returns 413",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 413', function () { pm.response.to.have.status(413); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Oversized Place\",\n  \"description\": \"A cute oversized place with a valid description length.\",\n  \"category\": \"STUDY_SPACE\",\n  \"address\": \"Building X\",\n  \"services\": [\n    \"WIFI\", \"POWER_OUTLETS\", \"PROJECTOR\", \"WHITEBOARD\", \"PRINTER\", \"SCANNER\",\n    \"VENDING_MACHINES\", \"COFFEE_MACHINE\", \"MICROWAVE\", \"WATER_FOUNTAIN\",\n    \"LOCKERS\", \"BIKE_PARKING\", \"AIR_CONDITIONING\", \"HEATING\", \"NATURAL_LIGHT\",\n    \"SILENT_ZONE\", \"GROUP_TABLES\", \"INDIVIDUAL_DESKS\", \"ERGONOMIC_CHAIRS\",\n    \"DUAL_MONITORS\", \"ETHERNET_PORTS\", \"ACCESSIBLE_RAMP\", \"ELEVATOR\",\n    \"RESTROOMS\", \"GARDEN_ACCESS\", \"TERRACE\", \"CAFE\", \"RESTAURANT\",\n    \"SECURITY_CAMERAS\", \"SECURITY_GUARD\", \"STUDENT_HELP_DESK\", \"IT_SUPPORT\",\n    \"PRINTING_STATION\", \"BOOK_SCANNER\", \"STUDY_CABINS\", \"PODCAST_STUDIO\",\n    \"VR_HEADSETS\", \"THREE_D_PRINTERS\", \"WHITEBOARDS_MOBILE\", \"FLIPCHARTS\",\n    \"CONFERENCE_PHONES\", \"WEBCAMS\", \"MICROPHONES\", \"SPEAKERS\", \"HEADPHONES\",\n    \"TABLETS_FOR_RENT\", \"LAPTOPS_FOR_RENT\", \"CHARGING_STATIONS\", \"USB_PORTS\",\n    \"WIRELESS_CHARGERS\", \"STANDING_DESKS\", \"BEAN_BAGS\", \"SOFAS\", \"OUTDOOR_SEATING\",\n    \"SUNSHADES\", \"WATERPROOF_OUTLETS\", \"LOCKABLE_CABINETS\", \"KEYCARD_ACCESS\",\n    \"BIEDERMEIER_DESKS\", \"READING_LAMPS\", \"DIMMABLE_LIGHTS\", \"SOUND_PROOFING\",\n    \"CARPETED_FLOORS\", \"HARDWOOD_FLOORS\", \"LARGE_WINDOWS\", \"BALCONY\",\n    \"ROOF_ACCESS\", \"SOLAR_POWER\", \"RECYCLING_BINS\", \"COMPOST_BINS\",\n    \"BIKE_REPAIR_STATION\", \"SHOWERS\", \"CHANGING_ROOMS\", \"FIRST_AID_KIT\",\n    \"AED_MACHINE\", \"FIRE_EXTINGUISHER\", \"EMERGENCY_EXIT\", \"RAMP_ACCESS\",\n    \"BRAILLE_SIGNAGE\", \"AUDIO_GUIDES\", \"HEARING_LOOP\", \"ELEVATOR_BRAILLE\",\n    \"AUTOMATIC_DOORS\", \"LOW_COUNTERS\", \"ACCESSIBLE_PARKING\", \"SHUTTLE_STOP\",\n    \"SUBWAY_ACCESS\", \"BUS_STOP_NEARBY\", \"TAXI_STAND\", \"CAR_SHARING_SPOT\",\n    \"ELECTRIC_CAR_CHARGER\", \"MOTORCYCLE_PARKING\", \"HELMET_LOCKERS\",\n    \"UMBRELLA_STAND\", \"LOST_AND_FOUND\", \"INFORMATION_BOARD\", \"EVENT_SCREEN\",\n    \"BULLETIN_BOARD\", \"SUGGESTION_BOX\", \"QUIET_ROOM\", \"MEDITATION_ROOM\",\n    \"PRAYER_ROOM\", \"MOTHER_ROOM\", \"NAP_ROOM\", \"GAMING_ZONE\", \"BOARD_GAMES\",\n    \"CHESS_TABLES\", \"PIANO\", \"GUITAR\", \"DJ_EQUIPMENT\", \"STAGE\", \"LIGHTING_RIG\",\n    \"GREEN_SCREEN\", \"PHOTO_STUDIO\", \"EDITING_SUITES\", \"SERVER_RACK\",\n    \"TESTING_LAB\", \"CHEMISTRY_HOOD\", \"BIOLOGY_MICROSCOPE\", \"3D_SCANNER\",\n    \"LASER_CUTTER\", \"SOLDERING_STATION\", \"TOOL_KIT\", \"WORKBENCH\", \"POTTERY_WHEEL\",\n    \"KILN\", \"SEWING_MACHINE\", \"3D_PEN\", \"VR_TREADMILL\", \"MOTION_CAPTURE\",\n    \"DRONE_CAGE\", \"WEATHER_STATION\", \"SOLAR_TELESCOPE\", \"OBSERVATORY_DOME\",\n    \"SERVICE_101\", \"SERVICE_102\", \"SERVICE_103\", \"SERVICE_104\", \"SERVICE_105\",\n    \"SERVICE_106\", \"SERVICE_107\", \"SERVICE_108\", \"SERVICE_109\", \"SERVICE_110\",\n    \"SERVICE_111\", \"SERVICE_112\", \"SERVICE_113\", \"SERVICE_114\", \"SERVICE_115\",\n    \"SERVICE_116\", \"SERVICE_117\", \"SERVICE_118\", \"SERVICE_119\", \"SERVICE_120\",\n    \"SERVICE_121\", \"SERVICE_122\", \"SERVICE_123\", \"SERVICE_124\", \"SERVICE_125\",\n    \"SERVICE_126\", \"SERVICE_127\", \"SERVICE_128\", \"SERVICE_129\", \"SERVICE_130\",\n    \"SERVICE_131\", \"SERVICE_132\", \"SERVICE_133\", \"SERVICE_134\", \"SERVICE_135\",\n    \"SERVICE_136\", \"SERVICE_137\", \"SERVICE_138\", \"SERVICE_139\", \"SERVICE_140\",\n    \"SERVICE_141\", \"SERVICE_142\", \"SERVICE_143\", \"SERVICE_144\", \"SERVICE_145\",\n    \"SERVICE_146\", \"SERVICE_147\", \"SERVICE_148\", \"SERVICE_149\", \"SERVICE_150\",\n    \"SERVICE_151\", \"SERVICE_152\", \"SERVICE_153\", \"SERVICE_154\", \"SERVICE_155\",\n    \"SERVICE_156\", \"SERVICE_157\", \"SERVICE_158\", \"SERVICE_159\", \"SERVICE_160\",\n    \"SERVICE_161\", \"SERVICE_162\", \"SERVICE_163\", \"SERVICE_164\", \"SERVICE_165\",\n    \"SERVICE_166\", \"SERVICE_167\", \"SERVICE_168\", \"SERVICE_169\", \"SERVICE_170\",\n    \"SERVICE_171\", \"SERVICE_172\", \"SERVICE_173\", \"SERVICE_174\", \"SERVICE_175\",\n    \"SERVICE_176\", \"SERVICE_177\", \"SERVICE_178\", \"SERVICE_179\", \"SERVICE_180\",\n    \"SERVICE_181\", \"SERVICE_182\", \"SERVICE_183\", \"SERVICE_184\", \"SERVICE_185\",\n    \"SERVICE_186\", \"SERVICE_187\", \"SERVICE_188\", \"SERVICE_189\", \"SERVICE_190\",\n    \"SERVICE_191\", \"SERVICE_192\", \"SERVICE_193\", \"SERVICE_194\", \"SERVICE_195\",\n    \"SERVICE_196\", \"SERVICE_197\", \"SERVICE_198\", \"SERVICE_199\", \"SERVICE_200\",\n    \"SERVICE_201\", \"SERVICE_202\", \"SERVICE_203\", \"SERVICE_204\", \"SERVICE_205\",\n    \"SERVICE_206\", \"SERVICE_207\", \"SERVICE_208\", \"SERVICE_209\", \"SERVICE_210\",\n    \"SERVICE_211\", \"SERVICE_212\", \"SERVICE_213\", \"SERVICE_214\", \"SERVICE_215\",\n    \"SERVICE_216\", \"SERVICE_217\", \"SERVICE_218\", \"SERVICE_219\", \"SERVICE_220\",\n    \"SERVICE_221\", \"SERVICE_222\", \"SERVICE_223\", \"SERVICE_224\", \"SERVICE_225\",\n    \"SERVICE_226\", \"SERVICE_227\", \"SERVICE_228\", \"SERVICE_229\", \"SERVICE_230\",\n    \"SERVICE_231\", \"SERVICE_232\", \"SERVICE_233\", \"SERVICE_234\", \"SERVICE_235\",\n    \"SERVICE_236\", \"SERVICE_237\", \"SERVICE_238\", \"SERVICE_239\", \"SERVICE_240\",\n    \"SERVICE_241\", \"SERVICE_242\", \"SERVICE_243\", \"SERVICE_244\", \"SERVICE_245\",\n    \"SERVICE_246\", \"SERVICE_247\", \"SERVICE_248\", \"SERVICE_249\", \"SERVICE_250\",\n    \"SERVICE_251\", \"SERVICE_252\", \"SERVICE_253\", \"SERVICE_254\", \"SERVICE_255\",\n    \"SERVICE_256\", \"SERVICE_257\", \"SERVICE_258\", \"SERVICE_259\", \"SERVICE_260\",\n    \"SERVICE_261\", \"SERVICE_262\", \"SERVICE_263\", \"SERVICE_264\", \"SERVICE_265\",\n    \"SERVICE_266\", \"SERVICE_267\", \"SERVICE_268\", \"SERVICE_269\", \"SERVICE_270\",\n    \"SERVICE_271\", \"SERVICE_272\", \"SERVICE_273\", \"SERVICE_274\", \"SERVICE_275\",\n    \"SERVICE_276\", \"SERVICE_277\", \"SERVICE_278\", \"SERVICE_279\", \"SERVICE_280\",\n    \"SERVICE_281\", \"SERVICE_282\", \"SERVICE_283\", \"SERVICE_284\", \"SERVICE_285\",\n    \"SERVICE_286\", \"SERVICE_287\", \"SERVICE_288\", \"SERVICE_289\", \"SERVICE_290\",\n    \"SERVICE_291\", \"SERVICE_292\", \"SERVICE_293\", \"SERVICE_294\", \"SERVICE_295\",\n    \"SERVICE_296\", \"SERVICE_297\", \"SERVICE_298\", \"SERVICE_299\", \"SERVICE_300\",\n    \"SERVICE_301\", \"SERVICE_302\", \"SERVICE_303\", \"SERVICE_304\", \"SERVICE_305\",\n    \"SERVICE_306\", \"SERVICE_307\", \"SERVICE_308\", \"SERVICE_309\", \"SERVICE_310\",\n    \"SERVICE_311\", \"SERVICE_312\", \"SERVICE_313\", \"SERVICE_314\", \"SERVICE_315\",\n    \"SERVICE_316\", \"SERVICE_317\", \"SERVICE_318\", \"SERVICE_319\", \"SERVICE_320\",\n    \"SERVICE_321\", \"SERVICE_322\", \"SERVICE_323\", \"SERVICE_324\", \"SERVICE_325\",\n    \"SERVICE_326\", \"SERVICE_327\", \"SERVICE_328\", \"SERVICE_329\", \"SERVICE_330\",\n    \"SERVICE_331\", \"SERVICE_332\", \"SERVICE_333\", \"SERVICE_334\", \"SERVICE_335\",\n    \"SERVICE_336\", \"SERVICE_337\", \"SERVICE_338\", \"SERVICE_339\", \"SERVICE_340\",\n    \"SERVICE_341\", \"SERVICE_342\", \"SERVICE_343\", \"SERVICE_344\", \"SERVICE_345\",\n    \"SERVICE_346\", \"SERVICE_347\", \"SERVICE_348\", \"SERVICE_349\", \"SERVICE_350\",\n    \"SERVICE_351\", \"SERVICE_352\", \"SERVICE_353\", \"SERVICE_354\", \"SERVICE_355\",\n    \"SERVICE_356\", \"SERVICE_357\", \"SERVICE_358\", \"SERVICE_359\", \"SERVICE_360\",\n    \"SERVICE_361\", \"SERVICE_362\", \"SERVICE_363\", \"SERVICE_364\", \"SERVICE_365\",\n    \"SERVICE_366\", \"SERVICE_367\", \"SERVICE_368\", \"SERVICE_369\", \"SERVICE_370\",\n    \"SERVICE_371\", \"SERVICE_372\", \"SERVICE_373\", \"SERVICE_374\", \"SERVICE_375\",\n    \"SERVICE_376\", \"SERVICE_377\", \"SERVICE_378\", \"SERVICE_379\", \"SERVICE_380\",\n    \"SERVICE_381\", \"SERVICE_382\", \"SERVICE_383\", \"SERVICE_384\", \"SERVICE_385\",\n    \"SERVICE_386\", \"SERVICE_387\", \"SERVICE_388\", \"SERVICE_389\", \"SERVICE_390\",\n    \"SERVICE_391\", \"SERVICE_392\", \"SERVICE_393\", \"SERVICE_394\", \"SERVICE_395\",\n    \"SERVICE_396\", \"SERVICE_397\", \"SERVICE_398\", \"SERVICE_399\", \"SERVICE_400\",\n    \"SERVICE_401\", \"SERVICE_402\", \"SERVICE_403\", \"SERVICE_404\", \"SERVICE_405\",\n    \"SERVICE_406\", \"SERVICE_407\", \"SERVICE_408\", \"SERVICE_409\", \"SERVICE_410\",\n    \"SERVICE_411\", \"SERVICE_412\", \"SERVICE_413\", \"SERVICE_414\", \"SERVICE_415\",\n    \"SERVICE_416\", \"SERVICE_417\", \"SERVICE_418\", \"SERVICE_419\", \"SERVICE_420\",\n    \"SERVICE_421\", \"SERVICE_422\", \"SERVICE_423\", \"SERVICE_424\", \"SERVICE_425\",\n    \"SERVICE_426\", \"SERVICE_427\", \"SERVICE_428\", \"SERVICE_429\", \"SERVICE_430\",\n    \"SERVICE_431\", \"SERVICE_432\", \"SERVICE_433\", \"SERVICE_434\", \"SERVICE_435\",\n    \"SERVICE_436\", \"SERVICE_437\", \"SERVICE_438\", \"SERVICE_439\", \"SERVICE_440\",\n    \"SERVICE_441\", \"SERVICE_442\", \"SERVICE_443\", \"SERVICE_444\", \"SERVICE_445\",\n    \"SERVICE_446\", \"SERVICE_447\", \"SERVICE_448\", \"SERVICE_449\", \"SERVICE_450\",\n    \"SERVICE_451\", \"SERVICE_452\", \"SERVICE_453\", \"SERVICE_454\", \"SERVICE_455\",\n    \"SERVICE_456\", \"SERVICE_457\", \"SERVICE_458\", \"SERVICE_459\", \"SERVICE_460\",\n    \"SERVICE_461\", \"SERVICE_462\", \"SERVICE_463\", \"SERVICE_464\", \"SERVICE_465\",\n    \"SERVICE_466\", \"SERVICE_467\", \"SERVICE_468\", \"SERVICE_469\", \"SERVICE_470\",\n    \"SERVICE_471\", \"SERVICE_472\", \"SERVICE_473\", \"SERVICE_474\", \"SERVICE_475\",\n    \"SERVICE_476\", \"SERVICE_477\", \"SERVICE_478\", \"SERVICE_479\", \"SERVICE_480\",\n    \"SERVICE_481\", \"SERVICE_482\", \"SERVICE_483\", \"SERVICE_484\", \"SERVICE_485\",\n    \"SERVICE_486\", \"SERVICE_487\", \"SERVICE_488\", \"SERVICE_489\", \"SERVICE_490\",\n    \"SERVICE_491\", \"SERVICE_492\", \"SERVICE_493\", \"SERVICE_494\", \"SERVICE_495\",\n    \"SERVICE_496\", \"SERVICE_497\", \"SERVICE_498\", \"SERVICE_499\", \"SERVICE_500\"\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/places",
+          "host": ["{{baseUrl}}"],
+          "path": ["places"]
+        }
+      }
+    },
+    {
+      "name": "5. [H5] Unsupported Method Returns 405",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 405', function () { pm.response.to.have.status(405); });",
+              "pm.test('Allow header is present', function () { pm.response.to.have.header('Allow'); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/places",
+          "host": ["{{baseUrl}}"],
+          "path": ["places"]
+        }
+      }
+    },
+    {
+      "name": "6. [M1] Duplicate Unique Key Returns 409 Conflict",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 409', function () { pm.response.to.have.status(409); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Main Library\",\n  \"description\": \"Huge library with many books.\",\n  \"category\": \"STUDY_SPACE\",\n  \"address\": \"Building L, Local L-505\",\n  \"services\": [\"WIFI\", \"POWER_OUTLETS\"]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/places",
+          "host": ["{{baseUrl}}"],
+          "path": ["places"]
+        }
+      }
+    }
+  ]
+}

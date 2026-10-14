@@ -19,19 +19,25 @@ export class ProblemDetailsFilter implements ExceptionFilter {
     const request = context.getRequest<Request>();
     const response = context.getResponse<Response>();
 
-    const status =
+    const error = exception as any;
+    const isExpressPayloadTooLarge =
+      error?.status === 413 || error?.type === "entity.too.large";
+
+    const status = isExpressPayloadTooLarge
+      ? HttpStatus.PAYLOAD_TOO_LARGE :
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
     const exceptionResponse =
-      exception instanceof HttpException
+      !isExpressPayloadTooLarge &&
+        exception instanceof HttpException
         ? exception.getResponse()
         : undefined;
 
     const body: NestErrorBody =
       typeof exceptionResponse === 'object' &&
-      exceptionResponse !== null
+        exceptionResponse !== null
         ? (exceptionResponse as NestErrorBody)
         : {};
 
@@ -65,6 +71,7 @@ export class ProblemDetailsFilter implements ExceptionFilter {
       400: 'validation-error',
       404: 'not-found',
       409: 'conflict',
+      413: 'payload-too-large',
       415: 'unsupported-media-type',
       500: 'internal-error',
     };
@@ -77,6 +84,7 @@ export class ProblemDetailsFilter implements ExceptionFilter {
       400: 'Bad Request',
       404: 'Not Found',
       409: 'Conflict',
+      413: 'Payload Too Large',
       415: 'Unsupported Media Type',
       500: 'Internal Server Error',
     };

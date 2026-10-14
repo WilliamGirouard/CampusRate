@@ -17,7 +17,7 @@ export class ReviewsController {
         summary: "Get info on one review",
         description : "Returns one review by given id"
     })
-    @ApiParam({name: "id", description: "The review's ID", example: "rvw_01JABC123"})
+    @ApiParam({name: "id", description: "The review's ID", example: "67069b2f1c9d2e0012ab34cd"})
     @ApiOkResponse({description : "Review found", type: ReviewResponseDto })
     @ApiNotFoundResponse({description: "Review not found", type: ProblemDetailsDto })
     async findOneReviewById(@Param("id") id : string) {
@@ -29,7 +29,7 @@ export class ReviewsController {
         summary: "Update a review",
         description: "Partially update an existing review and recalculate the statistics"
     })
-    @ApiParam({name: "id", description: "The reviews's ID", example: "rvw_01JABC123"})
+    @ApiParam({name: "id", description: "The reviews's ID", example: "67069b2f1c9d2e0012ab34cd"})
     @ApiOkResponse({ description: "Review modified", type : ReviewResponseDto})
     @ApiBadRequestResponse({
         description: "Invalid data",
@@ -50,7 +50,7 @@ export class ReviewsController {
         summary: "Delete a review",
         description: "Delete an existing review and recalculate the statistics"
     })
-    @ApiParam({name: "id", description: "The review's ID", example: "rvw_01JABC123"})
+    @ApiParam({name: "id", description: "The review's ID", example: "67069b2f1c9d2e0012ab34cd"})
     @ApiNoContentResponse({description: "Review deleted"})
     @ApiNotFoundResponse({
         description: "Review not found",
@@ -65,7 +65,7 @@ export class ReviewsController {
         summary: "List reviews for a place",
         description: "Returns all reviews linked to given place"
     })
-    @ApiParam({name : "placeId", description: "The place's ID", example: "plc_01JABC123"})
+    @ApiParam({name : "placeId", description: "The place's ID", example: "67069b2f1c9d2e0012ab34cd"})
     @ApiOkResponse({ description: "List of reviews", type: [ReviewResponseDto]})
     async findAllReviewsByPlaceId(@Param("placeId") placeId : string) {
         return this.reviewsService.findAllReviewsByPlaceId(placeId);
@@ -77,7 +77,7 @@ export class ReviewsController {
          summary: "Create a review for one place",
         description: "Create a review for an existing place and recalculate the statistics"
     })
-    @ApiParam({name : "placeId", description: "The place's ID", example: "plc_01JABC123"})
+    @ApiParam({name : "placeId", description: "The place's ID", example: "67069b2f1c9d2e0012ab34cd"})
     @ApiCreatedResponse({
             description: "Review has been created",
             type : ReviewResponseDto,
